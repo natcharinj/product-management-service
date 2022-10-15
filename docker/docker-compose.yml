@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${COMPOSE_PROJECT_NAME:?err}-mssql
+    container_name: mysql-server-product-services_db
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MySQL1234!
+      MYSQL_USER: p3tv3t
+      MYSQL_PASSWORD: '!P3tic@w'
+      MYSQL_DATABASE: e-commerce
+      MYSQL_TCP_PORT: 3308
+      MSSQL_DATA_DIR: /var/opt/mssql-product/data
+      MSSQL_LOG_DIR: /var/opt/mssql-product/log
+
+    ports:
+      - 3308:3308
+    volumes:
+      - mysql-data:/var/opt/mssql-product/data
+      - mysql-logs:/var/opt/mssql-product/log
+      - ./config:/etc/mysql/conf.d
+
+      - ./init/_basedata.sql:/docker-entrypoint-initdb.d/_basedata.sql
+    command:
+      [
+        --character-set-server=utf8mb4,
+        --collation-server=utf8mb4_unicode_ci,
+      ]
+    networks:
+      - compose_network
+
+volumes:
+  mysql-data:
+  mysql-logs:
+
+networks:
+  compose_network:
